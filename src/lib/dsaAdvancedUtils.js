@@ -78,10 +78,12 @@ export const generateBSTSteps = (root, operation, value) => {
     return { steps, finalRoot: newRoot };
 };
 
-// Heap Logic (Max Heap)
-export const generateHeapSteps = (heap, operation, value) => {
+// Heap Logic
+export const generateHeapSteps = (heap, operation, value, heapType = 'Max Heap') => {
     const steps = [];
     let newHeap = [...heap];
+    const comparator = heapType === 'Max Heap' ? (a, b) => a > b : (a, b) => a < b;
+    const comparisonText = heapType === 'Max Heap' ? 'larger' : 'smaller';
 
     if (operation === 'insert') {
         newHeap.push(value);
@@ -93,9 +95,9 @@ export const generateHeapSteps = (heap, operation, value) => {
             let parentIdx = Math.floor((idx - 1) / 2);
             steps.push({ type: 'compare', heap: [...newHeap], indices: [idx, parentIdx], message: `Comparing ${newHeap[idx]} with parent ${newHeap[parentIdx]}` });
             
-            if (newHeap[idx] > newHeap[parentIdx]) {
+            if (comparator(newHeap[idx], newHeap[parentIdx])) {
                 [newHeap[idx], newHeap[parentIdx]] = [newHeap[parentIdx], newHeap[idx]];
-                steps.push({ type: 'swap', heap: [...newHeap], indices: [idx, parentIdx], message: 'Child is larger, swapping' });
+                steps.push({ type: 'swap', heap: [...newHeap], indices: [idx, parentIdx], message: `Child is ${comparisonText}, swapping` });
                 idx = parentIdx;
             } else {
                 break;

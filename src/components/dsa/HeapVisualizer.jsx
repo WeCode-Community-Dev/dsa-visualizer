@@ -5,7 +5,7 @@ import { Play, Pause, Plus, ArrowDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { generateHeapSteps } from '@/lib/dsaAdvancedUtils';
 
-const HeapVisualizer = ({ darkMode }) => {
+const HeapVisualizer = ({ darkMode, heapType }) => {
     const [heap, setHeap] = useState([10, 20, 15, 30, 40]);
     const [inputValue, setInputValue] = useState('');
     const [history, setHistory] = useState([]);
@@ -27,7 +27,7 @@ const HeapVisualizer = ({ darkMode }) => {
     const handleInsert = () => {
         if (!inputValue) return;
         const val = parseInt(inputValue);
-        const steps = generateHeapSteps(heap, 'insert', val);
+        const steps = generateHeapSteps(heap, 'insert', val, heapType);
         setHistory(steps);
         setCurrentStep(-1);
         setIsPlaying(true);
@@ -42,7 +42,7 @@ const HeapVisualizer = ({ darkMode }) => {
     const displayHeap = (currentStep >= 0 && history[currentStep].heap) ? history[currentStep].heap : heap;
     const activeIdx = currentStep >= 0 ? history[currentStep].activeIdx : null;
     const compareIndices = currentStep >= 0 && history[currentStep].type === 'compare' ? history[currentStep].indices : [];
-    const message = currentStep >= 0 ? history[currentStep].message : "Heap Ready (Max Heap)";
+    const message = currentStep >= 0 ? history[currentStep].message : `Heap Ready (${heapType})`;
 
     // Render as tree
     const renderTree = (idx, x, y, offset) => {
