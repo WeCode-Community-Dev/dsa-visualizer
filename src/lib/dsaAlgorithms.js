@@ -99,6 +99,37 @@ export const generateInsertionSortSteps = (array) => {
   }
   return steps;
 };
+export const generateShellSortSteps = (array) => {
+  const steps = [];
+  const arr = [...array];
+  const n = arr.length;
+
+  for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
+    for (let i = gap; i < n; i++) {
+      let temp = arr[i];
+      let j = i;
+      steps.push({ type: 'select', indices: [i] });
+
+      while (j >= gap && arr[j - gap] > temp) {
+        steps.push({ type: 'compare', indices: [j - gap, i] });
+        steps.push({ type: 'overwrite', indices: [j], value: arr[j - gap] });
+        arr[j] = arr[j - gap];
+        steps.push({ type: 'revert', indices: [j, j - gap] });
+        j -= gap;
+      }
+      steps.push({ type: 'overwrite', indices: [j], value: temp });
+      arr[j] = temp;
+      steps.push({ type: 'revert', indices: [i, j] });
+    }
+  }
+
+  for (let i = 0; i < n; i++) {
+    steps.push({ type: 'sorted', indices: [i] });
+  }
+  return steps;
+};
+
+
 
 export const generateMergeSortSteps = (array) => {
   const steps = [];
