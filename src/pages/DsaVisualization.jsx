@@ -650,7 +650,7 @@ const DsaVisualization = () => {
                                         </div>
                                         <SortingVisualizer array={array} algorithmName={algorithm} isPlaying={isPlaying} speed={speed} className="primary" searchTarget={searchTarget} />
                                     </CardContent>
-                                공급                                </Card>
+                                </Card>
                                 {isComparisonMode && (
                                     <Card className={cn("overflow-hidden border-0 shadow-2xl", darkMode ? "bg-slate-900" : "bg-white")}>
                                         <CardContent className="p-6">
