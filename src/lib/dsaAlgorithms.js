@@ -188,6 +188,49 @@ function partition(arr, low, high, steps) {
   return (i + 1);
 }
 
+export const generateShellSortSteps = (array) => {
+  const steps = [];
+  const arr = [...array];
+  const n = arr.length;
+
+  for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
+
+    for (let i = gap; i < n; i++) {
+      let temp = arr[i];
+      let j = i;
+
+      steps.push({ type: 'select', indices: [i] }); 
+      while (j >= gap) {
+        steps.push({ type: 'compare', indices: [j, j - gap] });
+        
+        if (arr[j - gap] > temp) {
+      
+          steps.push({ 
+            type: 'overwrite', 
+            indices: [j], 
+            value: arr[j - gap] 
+          });
+          arr[j] = arr[j - gap];
+          
+          steps.push({ type: 'revert', indices: [j, j - gap] });
+          j -= gap;
+        } else {
+          steps.push({ type: 'revert', indices: [j, j - gap] });
+          break;
+        }
+      }
+      steps.push({ type: 'overwrite', indices: [j], value: temp });
+      arr[j] = temp;
+    }
+  }
+
+  // Final pass to mark everything as sorted
+  for (let k = 0; k < n; k++) {
+    steps.push({ type: 'sorted', indices: [k] });
+  }
+
+  return steps;
+};
 
 // --- Searching Algorithms ---
 
