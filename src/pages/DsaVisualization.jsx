@@ -3,10 +3,10 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet';
 import {
-    Play, Pause, RotateCcw, Settings, ChevronRight, ChevronLeft,
-    LayoutGrid, List, BarChart2, Activity, Moon, Sun,
-    GitCompare, SplitSquareHorizontal, ArrowRight, Network,
-    PlusCircle, Move, MousePointer2, Trash2, StepForward,
+    Play, Pause, RotateCcw,
+    List, Activity, Moon, Sun,
+    Network,
+    PlusCircle, Move, Trash2, StepForward,
     StepBack, Binary, BoxSelect, Layers, Search, Github
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -79,7 +79,7 @@ const SortingVisualizer = ({ array, algorithmName, isPlaying, speed, onFinished,
     };
 
     const animate = (steps) => {
-        const delay = speed === 100 ? 1 : (101 - speed) * 3;
+        const delay = Math.max(1, Math.floor(1000 / (speed * 2)));
         steps.forEach((step, index) => {
             const timeoutId = setTimeout(() => {
                 setDisplayArray(prev => {
@@ -468,7 +468,9 @@ const DsaVisualization = () => {
         dp: []
     };
 
-    const resetArray = () => {
+    const getBarColor = (isDark) => isDark ? 'rgba(148, 163, 184, 0.5)' : '#64748b';
+
+    const resetArray = useCallback(() => {
         setIsPlaying(false);
         setFinishedCount(0);
         const newArr = Array.from({ length: arraySize }, () => Math.floor(Math.random() * 100) + 5);
@@ -477,10 +479,10 @@ const DsaVisualization = () => {
         // Reset bar styles
         const bars = document.querySelectorAll('[class^="bar-"]');
         bars.forEach(bar => {
-            bar.style.backgroundColor = darkMode ? 'rgba(148, 163, 184, 0.5)' : '#64748b';
+            bar.style.backgroundColor = getBarColor(darkMode);
             bar.style.opacity = '1';
         });
-    };
+    }, [arraySize, darkMode]);
 
     const handlePlay = () => { setIsPlaying(!isPlaying); };
 
@@ -502,7 +504,7 @@ const DsaVisualization = () => {
         if (activeTab === 'sorting' || activeTab === 'searching') {
             resetArray();
         }
-    }, [arraySize, activeTab]);
+    }, [resetArray, activeTab]);
 
     // Cleanup finishedCount when playing starts or specific changes happen
     useEffect(() => {
@@ -520,7 +522,7 @@ const DsaVisualization = () => {
 
     const handleAlgorithmFinished = () => {
         setFinishedCount(prev => prev + 1);
-    }
+    };
 
     const addAlgorithm = () => {
         if (sortingAlgorithms.length < 6) {
