@@ -40,10 +40,11 @@ const getAlgorithmColor = (index) => {
     return colors[index % colors.length];
 };
 
-const SortingVisualizer = ({ array, algorithmName, isPlaying, speed, onFinished, className, searchTarget, darkMode }) => {
+const SortingVisualizer = ({ array, algorithmName, isPlaying, speed, onFinished, className, searchTarget, darkMode = false }) => {
     const [displayArray, setDisplayArray] = useState([...array]);
     const [description, setDescription] = useState('');
     const timeoutsRef = useRef([]);
+    const containerRef = useRef(null);
 
     const showLabels = array.length <= 35;
 
@@ -127,27 +128,31 @@ const SortingVisualizer = ({ array, algorithmName, isPlaying, speed, onFinished,
                 } else if (step.type === 'found') {
                     setDescription(`Found target ${searchTarget} at index ${step.indices[0]}!`);
                 } else {
-                    setDescription('Processing step...');
+                    // Fallback for unhandled step types
+                    setDescription(step.message || 'Processing step...');
                 }
 
-                const bars = document.getElementsByClassName(`bar-${className}`);
-                if (bars.length > 0) {
-                    if (step.type === 'compare') {
-                        step.indices.forEach(idx => { if (bars[idx]) bars[idx].style.backgroundColor = '#ef4444' });
-                    } else if (step.type === 'swap' || step.type === 'overwrite') {
-                        step.indices.forEach(idx => { if (bars[idx]) bars[idx].style.backgroundColor = '#eab308' });
-                    } else if (step.type === 'sorted' || step.type === 'found') {
-                        step.indices.forEach(idx => { if (bars[idx]) bars[idx].style.backgroundColor = '#10b981' });
-                    } else if (step.type === 'revert') {
-                        step.indices.forEach(idx => { if (bars[idx]) bars[idx].style.backgroundColor = '' });
-                    } else if (step.type === 'discard') {
-                        if (step.range) {
-                            for (let i = step.range[0]; i <= step.range[1]; i++) {
-                                if (bars[i]) bars[i].style.opacity = '0.2';
+                // Use ref for safer DOM manipulation within component scope
+                if (containerRef.current) {
+                    const bars = containerRef.current.children;
+                    if (bars.length > 0) {
+                        if (step.type === 'compare') {
+                            step.indices.forEach(idx => { if (bars[idx]) bars[idx].style.backgroundColor = '#ef4444' });
+                        } else if (step.type === 'swap' || step.type === 'overwrite') {
+                            step.indices.forEach(idx => { if (bars[idx]) bars[idx].style.backgroundColor = '#eab308' });
+                        } else if (step.type === 'sorted' || step.type === 'found') {
+                            step.indices.forEach(idx => { if (bars[idx]) bars[idx].style.backgroundColor = '#10b981' });
+                        } else if (step.type === 'revert') {
+                            step.indices.forEach(idx => { if (bars[idx]) bars[idx].style.backgroundColor = '' });
+                        } else if (step.type === 'discard') {
+                            if (step.range) {
+                                for (let i = step.range[0]; i <= step.range[1]; i++) {
+                                    if (bars[i]) bars[i].style.opacity = '0.2';
+                                }
                             }
+                        } else if (step.type === 'highlight-min' || step.type === 'select') {
+                            step.indices.forEach(idx => { if (bars[idx]) bars[idx].style.backgroundColor = '#a855f7' }); // Purple for special highlights
                         }
-                    } else if (step.type === 'highlight-min' || step.type === 'select') {
-                        step.indices.forEach(idx => { if (bars[idx]) bars[idx].style.backgroundColor = '#a855f7' }); // Purple for special highlights
                     }
                 }
 
@@ -161,10 +166,21 @@ const SortingVisualizer = ({ array, algorithmName, isPlaying, speed, onFinished,
     };
 
     return (
-        <div className="flex flex-col gap-2 w-full">
-            <div className={cn("flex items-end justify-center h-64 w-full p-4 rounded-xl border select-none transition-colors", className, showLabels ? "gap-1" : "gap-[1px]", darkMode ? "bg-slate-900/50 border-slate-800" : "bg-slate-100 border-slate-300")}>
+        <div className={cn("flex flex-col gap-2 w-full")}>
+            <div
+                ref={containerRef}
+                className={cn("flex items-end justify-center h-64 w-full p-4 rounded-xl border select-none transition-colors", className, showLabels ? "gap-1" : "gap-[1px]", darkMode ? "bg-slate-900/50 border-slate-800" : "bg-slate-100 border-slate-300")}
+            >
                 {displayArray.map((val, idx) => (
-                    <div key={idx} className={cn("relative flex flex-col justify-end items-center w-full h-full group rounded-t-md overflow-hidden", darkMode ? "bg-slate-800/30" : "bg-slate-200/50")}>
+                    <div
+                        key={idx}
+                        className={`relative flex flex-col justify-end items-center h-full group rounded-t-md overflow-hidden transition-all duration-200 bar-${className}`}
+                        style={{
+                            height: `${(val / Math.max(...array)) * 90}%`,
+                            width: `${100 / array.length}%`,
+                            backgroundColor: darkMode ? 'rgba(148, 163, 184, 0.5)' : '#64748b'
+                        }}
+                    >
                         {showLabels && (
                             <span
                                 className={cn("absolute text-[10px] font-bold transition-all duration-75 text-center w-full pointer-events-none z-10", darkMode ? "text-slate-400" : "text-slate-600")}
