@@ -408,6 +408,7 @@ const DsaVisualization = () => {
     const [darkMode, setDarkMode] = useState(true);
     const [customInput, setCustomInput] = useState('');
     const [searchTarget, setSearchTarget] = useState(42); // Default target
+    const [heapType, setHeapType] = useState('Max Heap');
     
     const [array, setArray] = useState([]);
 
@@ -455,7 +456,7 @@ const DsaVisualization = () => {
         graphs: ['BFS', 'DFS', 'Dijkstra', 'AStar'],
         linkedlist: [],
         trees: [],
-        heaps: [],
+        heaps: ['Max Heap', 'Min Heap'],
         dp: []
     };
 
@@ -586,6 +587,30 @@ const DsaVisualization = () => {
                                     )}
                                 </div>
                             )}
+                             {activeTab === 'heaps' && (
+                                <div className="space-y-4">
+                                    <h3 className="font-semibold text-sm uppercase tracking-wider text-slate-500">Heap Type</h3>
+                                    <Select value={heapType} onValueChange={setHeapType} disabled={isPlaying}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Heap Type" />
+                                        </SelectTrigger>
+                                        <SelectContent className={cn(darkMode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200")}>
+                                            {algoOptions.heaps.map(type => (
+                                                <SelectItem 
+                                                    key={type} 
+                                                    value={type} 
+                                                    className={cn(
+                                                        "cursor-pointer",
+                                                        darkMode ? "text-slate-100 focus:text-white focus:bg-slate-800" : "text-slate-900 focus:text-black focus:bg-slate-100"
+                                                    )}
+                                                >
+                                                    {type}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            )}
 
                             {(activeTab === 'sorting' || activeTab === 'searching') && (
                                 <div className="space-y-6">
@@ -693,9 +718,9 @@ const DsaVisualization = () => {
                              <Card className={cn("overflow-hidden border-0 shadow-2xl", darkMode ? "bg-slate-900" : "bg-white")}>
                                 <CardContent className="p-6">
                                     <div className="flex justify-between items-center mb-4">
-                                        <h3 className="font-bold text-xl text-yellow-400 flex items-center gap-2"><Layers className="h-5 w-5" /> Heap Visualizer (Max)</h3>
+                                    <h3 className="font-bold text-xl text-yellow-400 flex items-center gap-2"><Layers className="h-5 w-5" /> Heap Visualizer ({heapType})</h3>
                                     </div>
-                                    <HeapVisualizer darkMode={darkMode} />
+                                    <HeapVisualizer darkMode={darkMode} heapType={heapType} />
                                 </CardContent>
                             </Card>
                         ) : activeTab === 'dp' ? (
