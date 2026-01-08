@@ -40,6 +40,18 @@ const getAlgorithmColor = (index) => {
     return colors[index % colors.length];
 };
 
+/**
+ * Component to visualize sorting algorithms.
+ * @param {Object} props
+ * @param {Array<number>} props.array - The array to visualize.
+ * @param {string} props.algorithmName - The name of the algorithm.
+ * @param {boolean} props.isPlaying - Whether the visualization is running.
+ * @param {number} props.speed - Speed of animation (1-100).
+ * @param {Function} [props.onFinished] - Callback when visualization finishes.
+ * @param {string} props.className - Unique class for this visualizer instance.
+ * @param {number} [props.searchTarget] - Target number for searching algorithms.
+ * @param {boolean} [props.darkMode=false] - Whether dark mode is enabled.
+ */
 const SortingVisualizer = ({ array, algorithmName, isPlaying, speed, onFinished, className, searchTarget, darkMode = false }) => {
     const [displayArray, setDisplayArray] = useState([...array]);
     const [description, setDescription] = useState('');
@@ -128,8 +140,12 @@ const SortingVisualizer = ({ array, algorithmName, isPlaying, speed, onFinished,
                 } else if (step.type === 'found') {
                     setDescription(`Found target ${searchTarget} at index ${step.indices[0]}!`);
                 } else {
-                    // Fallback for unhandled step types
-                    setDescription(step.message || 'Processing step...');
+                    // Fallback for unhandled step types or general updates
+                    if (step.message) {
+                        setDescription(step.message);
+                    } else {
+                        setDescription('Processing step...');
+                    }
                 }
 
                 // Use ref for safer DOM manipulation within component scope
@@ -174,7 +190,7 @@ const SortingVisualizer = ({ array, algorithmName, isPlaying, speed, onFinished,
                 {displayArray.map((val, idx) => (
                     <div
                         key={idx}
-                        className={`relative flex flex-col justify-end items-center h-full group rounded-t-md overflow-hidden transition-all duration-200 bar-${className}`}
+                        className={`relative flex flex-col justify-end items-center h-full group rounded-t-md transition-all duration-200 bar-${className}`}
                         style={{
                             height: `${(val / Math.max(...array)) * 90}%`,
                             width: `${100 / array.length}%`,
