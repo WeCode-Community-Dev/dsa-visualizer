@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet';
 import {
@@ -34,6 +34,11 @@ import DPVisualizer from '@/components/dsa/DPVisualizer';
 import ContributorsSection from '@/components/dsa/ContributorsSection';
 
 // --- Existing Sorting/Graph Components ---
+
+const getAlgorithmColor = (index) => {
+    const colors = ["text-cyan-400", "text-purple-400", "text-emerald-400", "text-orange-400"];
+    return colors[index % colors.length];
+};
 
 const SortingVisualizer = ({ array, algorithmName, isPlaying, speed, onFinished, className, searchTarget, darkMode }) => {
     const [displayArray, setDisplayArray] = useState([...array]);
@@ -506,12 +511,12 @@ const DsaVisualization = () => {
         }
     }, [resetArray, activeTab]);
 
-    // Cleanup finishedCount when playing starts or specific changes happen
+    // Cleanup finishedCount when playing starts or when the number of algorithms changes
     useEffect(() => {
         if (isPlaying) {
             setFinishedCount(0);
         }
-    }, [isPlaying]);
+    }, [isPlaying, sortingAlgorithms.length]);
 
     // Check if all algorithms finished
     useEffect(() => {
@@ -546,16 +551,7 @@ const DsaVisualization = () => {
         setSortingAlgorithms(newAlgos);
     };
 
-    // ...
 
-    // Inside SortingVisualizer (Update style height logic)
-    // style={{ height: `${(val / Math.max(...array)) * 90}%`, ... }}
-
-    // ... Selection Options Logic ...
-    // If activeTab === 'sorting', render list of selects
-
-    // ... Grid Logic ...
-    // sortingAlgorithms.map(...)
 
     return (
         <div className={cn("min-h-screen p-4 md:p-8 transition-colors duration-300", darkMode ? "bg-slate-950 text-slate-100" : "bg-slate-50 text-slate-900")}>
@@ -751,12 +747,18 @@ const DsaVisualization = () => {
                     <div className="lg:col-span-9 space-y-6">
                         {
                             activeTab === 'sorting' ? (
-                                <div className={cn("grid gap-6", sortingAlgorithms.length === 1 ? "grid-cols-1" : sortingAlgorithms.length === 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3")}>
+                                <div className={cn("grid gap-6",
+                                    sortingAlgorithms.length === 1 ? "grid-cols-1" :
+                                        sortingAlgorithms.length === 2 ? "grid-cols-1 md:grid-cols-2" :
+                                            sortingAlgorithms.length === 3 ? "grid-cols-1 md:grid-cols-2 xl:grid-cols-3" :
+                                                sortingAlgorithms.length === 4 ? "grid-cols-1 md:grid-cols-2 xl:grid-cols-2" :
+                                                    "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
+                                )}>
                                     {sortingAlgorithms.map((algo, index) => (
                                         <Card key={`${algo}-${index}`} className={cn("overflow-hidden border-0 shadow-2xl", darkMode ? "bg-slate-900" : "bg-white")}>
                                             <CardContent className="p-6">
                                                 <div className="flex justify-between items-center mb-4">
-                                                    <h3 className={cn("font-bold text-xl", index === 0 ? "text-cyan-400" : index === 1 ? "text-purple-400" : index === 2 ? "text-emerald-400" : "text-orange-400")}>
+                                                    <h3 className={cn("font-bold text-xl", getAlgorithmColor(index))}>
                                                         {algo.replace(/([A-Z])/g, ' $1').trim()}
                                                     </h3>
                                                 </div>
@@ -783,7 +785,7 @@ const DsaVisualization = () => {
                                                 <h3 className="font-bold text-xl text-cyan-400">{algorithm.replace(/([A-Z])/g, ' $1').trim()}</h3>
                                                 <div className="text-sm text-slate-400">Target: <span className="font-bold text-white bg-cyan-600 px-2 py-0.5 rounded">{searchTarget}</span></div>
                                             </div>
-                                            <SortingVisualizer array={array} algorithmName={algorithm} isPlaying={isPlaying} speed={speed} className="primary" searchTarget={searchTarget} onFinished={() => setIsPlaying(false)} darkMode={darkMode} />
+                                            <SortingVisualizer array={array} algorithmName={algorithm} isPlaying={isPlaying} speed={speed} className="primary" searchTarget={searchTarget} onFinished={handleAlgorithmFinished} darkMode={darkMode} />
                                         </CardContent>
                                     </Card>
                                 </div>

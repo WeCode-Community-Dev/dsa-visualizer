@@ -46,9 +46,9 @@ const ContributorsSection = ({ darkMode }) => {
                   asChild
                   variant="ghost"
                   size="sm"
-                  className={cn("text-xs mb-3", darkMode ? "text-slate-500" : "text-slate-600",
-                    "w-full h-8 gap-2 border border-slate-700/20 hover:text-cyan-400",
-                    darkMode ? "hover:bg-slate-700" : "hover:bg-slate-100"
+                  className={cn(
+                    "text-xs mb-3 w-full h-8 gap-2 border border-slate-700/20 hover:text-cyan-400",
+                    darkMode ? "text-slate-500 hover:bg-slate-700" : "text-slate-600 hover:bg-slate-100"
                   )}
                 >
                   <a href={contributor.github} target="_blank" rel="noopener noreferrer">
