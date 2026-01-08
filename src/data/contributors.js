@@ -29,5 +29,11 @@ export const dsaContributors = [
     role: "Backend Architecture",
     github: "https://github.com/jamesw",
     avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150&h=150&fit=crop&crop=faces"
+  },
+  {
+    name: "Muhammed Nihas",
+    role: "AI Engineer",
+    github: "https://github.com/mhdnihas",
+    avatar: "https://avatars.githubusercontent.com/u/144945271?v=4" 
   }
 ];
