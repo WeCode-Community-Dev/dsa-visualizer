@@ -121,6 +121,8 @@ const SortingVisualizer = ({ array, algorithmName, isPlaying, speed, onFinished,
                     setDescription('Element is sorted');
                 } else if (step.type === 'found') {
                     setDescription(`Found target ${searchTarget} at index ${step.indices[0]}!`);
+                } else {
+                    setDescription('Processing step...');
                 }
 
                 const bars = document.getElementsByClassName(`bar-${className}`);
@@ -527,10 +529,12 @@ const DsaVisualization = () => {
     };
 
     const removeAlgorithm = (index) => {
+        if (isPlaying) return;
         if (sortingAlgorithms.length > 1) {
             const newAlgos = [...sortingAlgorithms];
             newAlgos.splice(index, 1);
             setSortingAlgorithms(newAlgos);
+            setFinishedCount(0);
         }
     };
 
@@ -832,11 +836,11 @@ const DsaVisualization = () => {
                                 </Card>
                             )
                         }
-                    </div >
-                </div >
+                    </div>
+                </div>
                 <ContributorsSection darkMode={darkMode} />
-            </div >
-        </div >
+            </div>
+        </div>
     );
 };
 
