@@ -32,6 +32,7 @@ import TreeVisualizer from '@/components/dsa/TreeVisualizer';
 import HeapVisualizer from '@/components/dsa/HeapVisualizer';
 import DPVisualizer from '@/components/dsa/DPVisualizer';
 import ContributorsSection from '@/components/dsa/ContributorsSection';
+import AlgorithmExplanation from '@/components/dsa/AlgorithmExplanation';
 
 // --- Existing Sorting/Graph Components ---
 
@@ -628,12 +629,13 @@ const DsaVisualization = () => {
                             )}
 
                             {(activeTab === 'sorting') && (
+                                
                                 <div className="space-y-2 pt-4 border-t border-slate-200 dark:border-slate-800">
                                     <label className="text-xs uppercase tracking-wider text-slate-500 font-bold">Custom Input</label>
                                     <div className="flex gap-2">
                                         <Input placeholder="10, 5, 8, 20..." value={customInput} onChange={(e) => setCustomInput(e.target.value)} className="h-8 text-xs" />
                                         <Button size="sm" variant="secondary" className="h-8" onClick={handleCustomInput}>Go</Button>
-                                    </div>
+                                    </div
                                 </div>
                             )}
                         </CardContent>
@@ -650,7 +652,10 @@ const DsaVisualization = () => {
                                         </div>
                                         <SortingVisualizer array={array} algorithmName={algorithm} isPlaying={isPlaying} speed={speed} className="primary" searchTarget={searchTarget} />
                                     </CardContent>
-                                공급                                </Card>
+                                    <AlgorithmExplanation algorithm={algorithm} darkMode={darkMode} />
+
+                                                              </Card>
+
                                 {isComparisonMode && (
                                     <Card className={cn("overflow-hidden border-0 shadow-2xl", darkMode ? "bg-slate-900" : "bg-white")}>
                                         <CardContent className="p-6">
@@ -658,8 +663,13 @@ const DsaVisualization = () => {
                                                 <h3 className="font-bold text-xl text-purple-400">{secondAlgorithm.replace(/([A-Z])/g, ' $1').trim()}</h3>
                                             </div>
                                             <SortingVisualizer array={array} algorithmName={secondAlgorithm} isPlaying={isPlaying} speed={speed} className="secondary" searchTarget={searchTarget} />
+
                                         </CardContent>
+                                        <AlgorithmExplanation algorithm={secondAlgorithm} darkMode={darkMode} />
+
                                     </Card>
+                                    
+                                    
                                 )}
                             </div>
                         ) : activeTab === 'graphs' ? (
