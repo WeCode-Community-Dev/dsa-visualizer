@@ -450,7 +450,7 @@ const DsaVisualization = () => {
     };
 
     const algoOptions = {
-        sorting: ['BubbleSort', 'SelectionSort', 'InsertionSort', 'MergeSort', 'QuickSort'],
+        sorting: ['BubbleSort', 'SelectionSort', 'InsertionSort', 'MergeSort', 'QuickSort', 'RadixSort'],
         searching: ['BinarySearch', 'LinearSearch'],
         graphs: ['BFS', 'DFS', 'Dijkstra', 'AStar'],
         linkedlist: [],
