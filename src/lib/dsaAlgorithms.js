@@ -100,6 +100,54 @@ export const generateInsertionSortSteps = (array) => {
   return steps;
 };
 
+  // Assumes non-negative integers
+export const generateRadixSortSteps = (array) => {
+
+  const steps = [];
+  const arr = [...array];
+  const n = arr.length;
+
+  if (n <= 1) {
+    if (n === 1) steps.push({ type: 'sorted', indices: [0] });
+    return steps;
+  }
+
+  let max = arr[0];
+  for (let i = 1; i < n; i++) {
+    if (arr[i] > max) max = arr[i];
+  }
+
+
+  for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+    const buckets = Array.from({ length: 10 }, () => []);
+
+    // Distribute elements into buckets
+    for (let i = 0; i < n; i++) {
+      const digit = Math.floor(arr[i] / exp) % 10;
+      steps.push({ type: 'select', indices: [i] });
+      buckets[digit].push(arr[i]);
+    }
+
+    // Collect from buckets back into array
+    let idx = 0;
+    for (let d = 0; d < 10; d++) {
+      for (let val of buckets[d]) {
+        steps.push({ type: 'overwrite', indices: [idx], value: val });
+        arr[idx] = val;
+        idx++;
+      }
+    }
+  }
+
+  // Mark all as sorted
+  for (let i = 0; i < n; i++) {
+    steps.push({ type: 'sorted', indices: [i] });
+  }
+
+  return steps;
+};
+
+
 export const generateMergeSortSteps = (array) => {
   const steps = [];
   const arr = [...array];
@@ -187,6 +235,7 @@ function partition(arr, low, high, steps) {
   steps.push({ type: 'revert', indices: [high] }); // Unhighlight old pivot pos
   return (i + 1);
 }
+
 
 
 // --- Searching Algorithms ---
