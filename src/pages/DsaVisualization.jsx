@@ -3,10 +3,8 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet';
 import { 
-  Play, Pause, RotateCcw, Settings, ChevronRight, ChevronLeft, 
-  LayoutGrid, List, BarChart2, Activity, Moon, Sun, 
-  GitCompare, SplitSquareHorizontal, ArrowRight, Network, 
-  PlusCircle, Move, MousePointer2, Trash2, StepForward, 
+  Play, Pause, RotateCcw, List, Activity, Moon, Sun, 
+  GitCompare, Network, PlusCircle, Move, Trash2, StepForward, 
   StepBack, Binary, BoxSelect, Layers, Search, Github
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -28,6 +26,8 @@ import { useToast } from '@/components/ui/use-toast';
 
 // Import new visualizers
 import LinkedListVisualizer from '@/components/dsa/LinkedListVisualizer';
+import DoublyLinkedListVisualizer from '@/components/dsa/DoublyLinkedListVisualizer';
+import CircularLinkedListVisualizer from '@/components/dsa/CircularLinkedListVisualizer';
 import TreeVisualizer from '@/components/dsa/TreeVisualizer';
 import HeapVisualizer from '@/components/dsa/HeapVisualizer';
 import DPVisualizer from '@/components/dsa/DPVisualizer';
@@ -408,6 +408,7 @@ const DsaVisualization = () => {
     const [darkMode, setDarkMode] = useState(true);
     const [customInput, setCustomInput] = useState('');
     const [searchTarget, setSearchTarget] = useState(42); // Default target
+    const [llType, setLlType] = useState('singly');
     
     const [array, setArray] = useState([]);
 
@@ -675,9 +676,28 @@ const DsaVisualization = () => {
                              <Card className={cn("overflow-hidden border-0 shadow-2xl", darkMode ? "bg-slate-900" : "bg-white")}>
                                 <CardContent className="p-6">
                                     <div className="flex justify-between items-center mb-4">
-                                        <h3 className="font-bold text-xl text-emerald-400 flex items-center gap-2"><List className="h-5 w-5" /> Linked List Visualizer</h3>
+                                        <h3 className="font-bold text-xl text-emerald-400 flex items-center gap-2">
+                                            <List className="h-5 w-5" /> Linked List Visualizer ({llType.charAt(0).toUpperCase() + llType.slice(1)})
+                                        </h3>
+                                        <div className="flex items-center gap-2">
+                                            <span className={cn("text-sm font-medium", darkMode ? "text-slate-400" : "text-slate-500")}>Type</span>
+                                            <Select value={llType} onValueChange={setLlType}>
+                                                <SelectTrigger className={cn("w-[120px] h-8", darkMode ? "border-slate-700 bg-slate-900 text-slate-100" : "border-slate-300 bg-white text-slate-900")}>
+                                                    <SelectValue placeholder="Select type" />
+                                                </SelectTrigger>
+                                                <SelectContent className={cn(darkMode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200")}>
+                                                    <SelectItem value="singly" className={cn("cursor-pointer", darkMode ? "text-slate-100 focus:text-white focus:bg-slate-800" : "text-slate-900 focus:text-black focus:bg-slate-100")}>Singly</SelectItem>
+                                                    <SelectItem value="doubly" className={cn("cursor-pointer", darkMode ? "text-slate-100 focus:text-white focus:bg-slate-800" : "text-slate-900 focus:text-black focus:bg-slate-100")}>Doubly</SelectItem>
+                                                    <SelectItem value="circular" className={cn("cursor-pointer", darkMode ? "text-slate-100 focus:text-white focus:bg-slate-800" : "text-slate-900 focus:text-black focus:bg-slate-100")}>Circular</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
                                     </div>
-                                    <LinkedListVisualizer darkMode={darkMode} />
+
+                                    {llType === 'singly' && <LinkedListVisualizer darkMode={darkMode} />}
+                                    {llType === 'doubly' && <DoublyLinkedListVisualizer darkMode={darkMode} />}
+                                    {llType === 'circular' && <CircularLinkedListVisualizer darkMode={darkMode} />}
+
                                 </CardContent>
                             </Card>
                         ) : activeTab === 'trees' ? (
